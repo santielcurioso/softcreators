@@ -527,8 +527,8 @@ footer{background:var(--bg2);border-top:0.5px solid var(--border);padding:3rem 2
           <input type="text" id="fname" placeholder="Tu nombre"/>
         </div>
         <div class="form-group">
-          <label>Email o WhatsApp</label>
-          <input type="text" id="femail" placeholder="correo@empresa.com"/>
+          <label>Email</label>
+          <input type="email" id="femail" placeholder="correo@empresa.com"/>
         </div>
         <div class="form-group">
           <label>¿Qué necesitas?</label>
@@ -546,7 +546,11 @@ footer{background:var(--bg2);border-top:0.5px solid var(--border);padding:3rem 2
           <label>Cuéntanos más</label>
           <textarea id="fmsg" placeholder="Describe tu proyecto o idea..."></textarea>
         </div>
-        <button class="form-submit" onclick="sendForm()">Enviar mensaje →</button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:.5rem">
+          <button class="form-submit" style="background:var(--accent)" onclick="sendEmail()">✉️ Enviar por email</button>
+          <button class="form-submit" style="background:#25d366" onclick="sendWhatsApp()">💬 Enviar por WhatsApp</button>
+        </div>
+        <p style="font-size:.72rem;color:var(--muted);text-align:center;margin-top:.6rem">Elige cómo prefieres que te contactemos</p>
       </div>
     </div>
   </div>
@@ -600,17 +604,46 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
     if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'})}
   });
 });
-function sendForm(){
-  const n=document.getElementById('fname').value;
-  const e=document.getElementById('femail').value;
-  if(!n||!e){alert('Por favor completa nombre y contacto.');return;}
-  const toast=document.getElementById('toast');
-  toast.classList.add('show');
-  setTimeout(()=>toast.classList.remove('show'),3500);
-  document.getElementById('fname').value='';
-  document.getElementById('femail').value='';
+const FORMSPREE_ID = 'TU_ID_FORMSPREE'; // Reemplaza con tu ID de formspree.io
+const WA_NUMBER   = '573161242353';      // Reemplaza con tu número (sin + ni espacios)
+
+function getFields(){
+  const n=document.getElementById('fname').value.trim();
+  const e=document.getElementById('femail').value.trim();
+  const s=document.getElementById('fservice').value;
+  const m=document.getElementById('fmsg').value.trim();
+  return {n,e,s,m};
+}
+function clearFields(){
+  ['fname','femail','fmsg'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('fservice').value='';
-  document.getElementById('fmsg').value='';
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+async function sendEmail(){
+  const {n,e,s,m}=getFields();
+  if(!n||!e){alert('Por favor completa al menos nombre y email.');return;}
+  try{
+    const res=await fetch(`https://formspree.io/f/${FORMSPREE_ID}`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({nombre:n,email:e,servicio:s,mensaje:m})
+    });
+    if(res.ok){showToast('✅ Mensaje enviado, te escribimos pronto.');clearFields();}
+    else{alert('Hubo un error. Intenta por WhatsApp o escríbenos directamente.');}
+  }catch{alert('Error de red. Intenta de nuevo o usa WhatsApp.');}
+}
+
+function sendWhatsApp(){
+  const {n,e,s,m}=getFields();
+  if(!n){alert('Por favor escribe tu nombre.');return;}
+  const txt=`Hola SoftCreators! 👋\n\n*Nombre:* ${n}\n*Email:* ${e||'No indicado'}\n*Servicio:* ${s||'No indicado'}\n*Mensaje:* ${m||'Sin mensaje adicional'}`;
+  window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(txt)}`,'_blank');
+  clearFields();
 }
 </script>
 </body>
