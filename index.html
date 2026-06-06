@@ -546,9 +546,9 @@ footer{background:var(--bg2);border-top:0.5px solid var(--border);padding:3rem 2
           <label>Cuéntanos más</label>
           <textarea id="fmsg" placeholder="Describe tu proyecto o idea..."></textarea>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:.5rem">
-          <button class="form-submit" style="background:var(--accent)" onclick="sendEmail()">✉️ Enviar por email</button>
-          <button class="form-submit" style="background:#25d366" onclick="sendWhatsApp()">💬 Enviar por WhatsApp</button>
+        <div style="display:flex;gap:8px;margin-top:.8rem;width:100%">
+          <button onclick="sendEmail()" style="flex:1;background:var(--accent);color:#fff;border:none;padding:12px 8px;border-radius:8px;font-family:'Syne',sans-serif;font-weight:600;font-size:.82rem;cursor:pointer;transition:opacity .2s">✉️ Email</button>
+          <button onclick="sendWhatsApp()" style="flex:1;background:#25d366;color:#fff;border:none;padding:12px 8px;border-radius:8px;font-family:'Syne',sans-serif;font-weight:600;font-size:.82rem;cursor:pointer;transition:opacity .2s">💬 WhatsApp</button>
         </div>
         <p style="font-size:.72rem;color:var(--muted);text-align:center;margin-top:.6rem">Elige cómo prefieres que te contactemos</p>
       </div>
